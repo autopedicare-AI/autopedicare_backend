@@ -1,0 +1,38 @@
+name: Deploy to Fly
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest -q
+
+      - name: Install flyctl
+        uses: superfly/flyctl-actions@v1
+        with:
+          version: latest
+
+    #   - name: Deploy to Fly
+    #     env:
+    #       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    #     run: flyctl deploy --config fly.toml --remote-only
