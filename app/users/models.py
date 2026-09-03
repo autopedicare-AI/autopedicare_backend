@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from app.auth.models import UserLoginHistory
     from app.onboarding.models import OnboardingRequest
     from app.rbac.models import UserRole
+    from app.vehicles.models import Vehicle
 
 class AuthProvider(str, PyEnum):
     GOOGLE = "google"
@@ -69,5 +70,11 @@ class User(Base):
         "UserRole",
         foreign_keys="UserRole.user_id",
         back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    
+    vehicles: Mapped[list["Vehicle"]] = relationship(
+        "Vehicle",
+        back_populates="owner",
         cascade="all, delete-orphan",
     )

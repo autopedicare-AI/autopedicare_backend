@@ -35,6 +35,7 @@ class AuthenticatedUserResponse(BaseModel):
 class OnboardingResponse(BaseModel):
     requested_type: RequestedAccountType
     status: OnboardingStatus
+    assigned_role: str | None
 
 class AuthResponse(BaseModel):
     user: AuthenticatedUserResponse

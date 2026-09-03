@@ -7,7 +7,7 @@ from app.auth.models import UserLoginHistory
 from app.auth.security import create_token_pair
 from app.users.models import AuthProvider, User
 from app.onboarding.models import OnboardingRequest, RequestedAccountType
-from app.onboarding.services import get_or_create_onboarding_request
+from app.onboarding.services import get_or_create_onboarding_request, process_onboarding
 
 logger = logging.getLogger(__name__)
 
@@ -102,6 +102,11 @@ async def authenticate_with_provider(
             session=session,
             user_id=user.id,
             requested_type=requested_type,
+        )
+        
+        onboarding = await process_onboarding(
+            session=session,
+            onboarding=onboarding,
         )
 
         login_history = UserLoginHistory(

@@ -14,7 +14,7 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 REFRESH_TOKEN_EXPIRE_DAYS = 30
-REFRESH_TOKEN_TYPE = "refresh"  # nosec B105
+REFRESH_TOKEN_TYPE = "refresh"
 
 
 def create_access_token(

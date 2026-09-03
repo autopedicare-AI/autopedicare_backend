@@ -2,6 +2,7 @@ import logging
 from typing import cast
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.google import verify_google_token
@@ -20,6 +21,7 @@ from app.auth.security import (
 )
 from app.auth.service import authenticate_with_provider
 from app.database import get_db
+from app.rbac.models import Role
 from app.users.models import AuthProvider, User
 
 logger = logging.getLogger(__name__)
@@ -103,7 +105,14 @@ async def google_auth(
     )
 
     authenticated_user = cast(User, user)
-    
+
+    assigned_role_name = None
+    if onboarding.assigned_role_id is not None:
+        result = await db.execute(
+            select(Role.name).where(Role.id == onboarding.assigned_role_id)
+        )
+        assigned_role_name = result.scalar_one_or_none()
+
     return AuthResponse(
         user=AuthenticatedUserResponse(
             id=authenticated_user.id,
@@ -113,6 +122,7 @@ async def google_auth(
         onboarding=OnboardingResponse(
             requested_type=onboarding.requested_type,
             status=onboarding.status,
+            assigned_role=assigned_role_name,
         ),
         tokens=TokenResponse(
             access_token=tokens["access_token"],

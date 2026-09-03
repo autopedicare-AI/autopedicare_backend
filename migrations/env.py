@@ -10,8 +10,7 @@ from app.database import Base
 from app.users.models import User
 from app.auth.models import UserLoginHistory, RefreshToken
 from app.onboarding.models import OnboardingRequest
-
-
+from app.vehicles.models import Vehicle
 from app.rbac.models import (
     Role,
     Permission,
